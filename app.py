@@ -25,9 +25,18 @@ def index():
 		measurables = Measurable.query.all()
 	return render_template('index.html', measurables=measurables)
 
-@app.route('/<name>')
-def hello_name(name):
-	return "Hello {}!".format(name)
+@app.route('/modality/<id>')
+def modality(id):
+	modality=Measurable.query.all()[0].modality
+	measurables=Measurable.query.filter_by(modality=modality)
+	return render_template('modality.html', measurables=measurables, modality=modality)
+
+#@app.route('/technology/<id>')
+#def modality(id):
+#	modality=Measurable.query.all()[0].modality
+#	measurables=Measurable.query.filter_by(modality=modality)
+#	return render_template('modality.html', measurables=measurables, modality=modality)
+
 
 if __name__ == '__main__':
 	print(os.environ['APP_SETTINGS'])
