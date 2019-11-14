@@ -31,14 +31,8 @@ def modality(id):
 	measurables=Measurable.query.filter_by(modality=modality)
 	return render_template('modality.html', measurables=measurables, modality=modality)
 
-#@app.route('/technology/<id>')
-#def modality(id):
-#	modality=Measurable.query.all()[0].modality
-#	measurables=Measurable.query.filter_by(modality=modality)
-#	return render_template('modality.html', measurables=measurables, modality=modality)
-
-
-if __name__ == '__main__':
+@app.route('/import')
+def data_import():
 	if not Modality.query.all():
 		df = pd.read_csv('modalities.csv',sep='|')
 		db.session.bulk_insert_mappings(df.to_dict(orient="records"))
@@ -49,6 +43,14 @@ if __name__ == '__main__':
 		df = pd.read_csv('measurables.csv',sep='|')
 		db.session.bulk_insert_mappings(df.to_dict(orient="records"))
 	db.session.commit()
+#@app.route('/technology/<id>')
+#def modality(id):
+#	modality=Measurable.query.all()[0].modality
+#	measurables=Measurable.query.filter_by(modality=modality)
+#	return render_template('modality.html', measurables=measurables, modality=modality)
+
+
+if __name__ == '__main__':
 	print(os.environ['APP_SETTINGS'])
 	print(app.config)
 	app.run()
