@@ -48,6 +48,7 @@ if __name__ == '__main__':
 	if not Measurable.query.all():
 		df = pd.read_csv('measurables.csv',sep='|')
 		db.session.bulk_insert_mappings(df.to_dict(orient="records"))
+	db.session.commit()
 	print(os.environ['APP_SETTINGS'])
 	print(app.config)
 	app.run()
