@@ -74,7 +74,7 @@ def data_import():
 
 @app.route('/drop')
 def drop():
-	db.session.drop_all()
+	db.drop_all()
 	db.session.commit()
 	return 200, "OK"
 #@app.route('/technology/<id>')
