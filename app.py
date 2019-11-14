@@ -36,13 +36,13 @@ def modality(id):
 def data_import():
 	if not Modality.query.all():
 		df = pd.read_csv('modalities.csv',sep='|')
-		db.session.bulk_insert_mappings(df.to_dict(orient="records"))
+		db.session.bulk_insert_mappings(Modality,df.to_dict(orient="records"))
 	if not Technology.query.all():
 		df = pd.read_csv('technologies.csv',sep='|')
-		db.session.bulk_insert_mappings(df.to_dict(orient="records"))
+		db.session.bulk_insert_mappings(Technology,df.to_dict(orient="records"))
 	if not Measurable.query.all():
 		df = pd.read_csv('measurables.csv',sep='|')
-		db.session.bulk_insert_mappings(df.to_dict(orient="records"))
+		db.session.bulk_insert_mappings(Measurable,df.to_dict(orient="records"))
 	db.session.commit()
 #@app.route('/technology/<id>')
 #def modality(id):
