@@ -12,7 +12,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-from models import Modality, Measurable 
+from models import Modality, Measurable, Technology 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -39,6 +39,15 @@ def modality(id):
 
 
 if __name__ == '__main__':
+	if not Modality.query.all():
+		df = pd.read_csv('modalities.csv',sep='|')
+		db.session.bulk_insert_mappings(df.to_dict(orient="records"))
+	if not Technology.query.all():
+		df = pd.read_csv('technologies.csv',sep='|')
+		db.session.bulk_insert_mappings(df.to_dict(orient="records"))
+	if not Measurable.query.all():
+		df = pd.read_csv('measurables.csv',sep='|')
+		db.session.bulk_insert_mappings(df.to_dict(orient="records"))
 	print(os.environ['APP_SETTINGS'])
 	print(app.config)
 	app.run()
