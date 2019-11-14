@@ -74,6 +74,7 @@ def data_import():
 
 @app.route('/drop')
 def drop():
+	db.session.execute('DROP TABLE alembic_version;')
 	db.drop_all()
 	db.session.commit()
 	return 200, "OK"
