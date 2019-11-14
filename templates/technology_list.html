@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<title>{{ modality }}</title>
+  <body>
+    <div class="container">
+      <h1>{{ modality }}</h1>
+      <form role="form" method='POST' action='/technology'>
+        <div class="form-group">
+          <input type="text" name="technology" class="form-control" id="url-box" placeholder="Search..." style="max-width: 300px;" autofocus required>
+        </div>
+        
+      </form>
+      <br>
+      {% for technology in technologies %}
+        <div class="card">
+          <div class="card-header">
+            <h4>{{ technology.name }}</h4>
+          </div>
+          <div class="card-body">
+            <p class="card-text">{{ technology.description }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </body>
+{% endblock %}  
+</html>

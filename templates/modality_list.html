@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<title>Modalities</title>
+  <body>
+    <div class="container">
+      <h1>Modalities</h1>
+      <form role="form" method='POST' action='/modality'>
+        <div class="form-group">
+          <input type="text" name="modality" class="form-control" id="url-box" placeholder="Search..." style="max-width: 300px;" autofocus required>
+        </div>
+        
+      </form>
+      <br>
+      {% for modality in modalities %}
+        <div class="card">
+          <div class="card-header">
+            <h4>{{ modality.name }}</h4>
+          </div>
+          <div class="card-body">
+            <p class="card-text">{{ modality.description }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </body>
+{% endblock %}  
+</html>

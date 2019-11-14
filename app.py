@@ -17,6 +17,10 @@ from models import Modality, Measurable, Technology
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+	return render_template('index.html')
+
+@app.route('/measurable', methods=['GET', 'POST'])
+def measurable_list():
 	measurables = []
 	if request.method == 'POST':
 		name = request.form['measurable']
@@ -24,7 +28,29 @@ def index():
 		measurables.append(m)
 	else:
 		measurables = Measurable.query.all()
-	return render_template('index.html', measurables=measurables)
+	return render_template('measurable_list.html', measurables=measurables)
+
+@app.route('/technology', methods=['GET', 'POST'])
+def technology_list():
+	technologies = []
+	if request.method == 'POST':
+		name = request.form['technology']
+		t = Technology.query.filter_by(name=name).first()
+		technologies.append(t)
+	else:
+		technologies = Technology.query.all()
+	return render_template('technology_list.html', technologies=technologies)
+
+@app.route('/modality', methods=['GET', 'POST'])
+def modality_list():
+	modalities = []
+	if request.method == 'POST':
+		name = request.form['modality']
+		m = Modality.query.filter_by(name=name).first()
+		modalities.append(m)
+	else:
+		modalities = Modality.query.all()
+	return render_template('modality_list.html', modalities=modalities)
 
 @app.route('/modality/<id>')
 def modality(id):
@@ -44,6 +70,13 @@ def data_import():
 		df = pd.read_csv('measurables.csv',sep='|')
 		db.session.bulk_insert_mappings(Measurable,df.to_dict(orient="records"))
 	db.session.commit()
+	return 200, "OK"
+
+@app.route('/drop')
+def drop():
+	db.session.drop_all()
+	db.session.commit()
+	return 200, "OK"
 #@app.route('/technology/<id>')
 #def modality(id):
 #	modality=Measurable.query.all()[0].modality

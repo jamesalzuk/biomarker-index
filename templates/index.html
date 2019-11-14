@@ -4,27 +4,32 @@
 <title>Measurables</title>
   <body>
     <div class="container">
-      <h1>Measurables Index</h1>
-      <form role="form" method='POST' action='/'>
-        <div class="form-group">
-          <input type="text" name="measurable" class="form-control" id="url-box" placeholder="Search..." style="max-width: 300px;" autofocus required>
+      
+      <div class="jumbotron jumbotron-fluid" href='/'>
+        <a class="text-center btn-default" href='/modality'>
+        <div class="container">
+          <h1 class="display-4">Modalities</h1>
         </div>
-        
-      </form>
-      <br>
-      {% for measurable in measurables %}
-        <div class="card">
-          <div class="card-header">
-            <h4>{{ measurable.name }}</h4>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">
-              <span class="badge badge-secondary">{{ measurable.modality }}</span>
-            </h5>
-            <p class="card-text">{{ measurable.description }}</p>
-          </div>
+      </a>
+      </div>
+    </div>
+    <div class="container">
+      <a class="h1 text-center" href='/measurable'>
+      <div class="jumbotron jumbotron-fluid" href='/'>
+        <div class="container">
+          <h1 class="display-4">Measurables</h1>
         </div>
-      {% endfor %}
+      </div>
+    </a>
+    </div>
+    <div class="container">
+      <a class="h1 text-center" href='/technology'>
+      <div class="jumbotron jumbotron-fluid" href='/'>
+        <div class="container">
+          <h1 class="display-4">Technologies</h1>
+        </div>
+      </div>
+    </a>
     </div>
   </body>
 {% endblock %}  
