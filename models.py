@@ -1,19 +1,5 @@
 from app import db
 
-class Role(db.Model, RoleMixin):
-	id = db.Column(db.Integer(), primary_key=True)
-	name = db.Column(db.String(80), unique=True)
-	description = db.Column(db.String(255))
-
-class User(db.Model, UserMixin):
-	id = db.Column(db.Integer, primary_key=True)
-	email = db.Column(db.String(255), unique=True)
-	password = db.Column(db.String(255))
-	active = db.Column(db.Boolean())
-	confirmed_at = db.Column(db.DateTime())
-	roles = db.relationship('Role', secondary=roles_users,
-		backref=db.backref('users', lazy='dynamic'))
-
 class Measurable(db.Model):
 	id = db.Column(db.Integer(), primary_key=True)
 	name = db.Column(db.String(80))
@@ -46,7 +32,21 @@ class Technology(db.Model):
 	self_administer = db.Column(db.String(80))
 	compatibility = db.Column(db.String(80))
 		
+# project/server/models.py
 
-	#measurables = 	
-	#comments	
-	#modalities covered	
+import jwt
+import datetime
+
+from app import app, db
+
+
+class User(db.Model):
+    """ User Model for storing user related details """
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    registered_on = db.Column(db.DateTime, nullable=False)
+    admin = db.Column(db.Boolean, nullable=False, default=False)
+
