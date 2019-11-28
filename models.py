@@ -1,4 +1,6 @@
-from app import db
+from app import db, login_manager
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 class Measurable(db.Model):
 	id = db.Column(db.Integer(), primary_key=True)
@@ -31,22 +33,27 @@ class Technology(db.Model):
 	medical_approval = db.Column(db.String(80))	
 	self_administer = db.Column(db.String(80))
 	compatibility = db.Column(db.String(80))
-		
-# project/server/models.py
 
-import jwt
-import datetime
-
-from app import app, db
-
-
-class User(db.Model):
+class User(UserMixin, db.Model):
     """ User Model for storing user related details """
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.String(255), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
+    username = db.Column(db.String(64), index=True, unique=True)
+    email = db.Column(db.String(256), unique=True, nullable=False)
+    password_hash = db.Column(db.String(256),nullable=False)
     registered_on = db.Column(db.DateTime, nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+@login_manager.user_loader
+def load_user(id):
+	return User.query.get(int(id))
+
+
 

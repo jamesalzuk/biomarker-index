@@ -1,74 +1,73 @@
 import os
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, flash, url_for
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_restful import Api
+from flask_login import LoginManager, login_required, current_user, login_user, logout_user
+from werkzeug.urls import url_parse
 import requests
 import pandas as pd
+from datetime import datetime
 
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
 
-
-
 app = Flask(__name__)
-
+db = SQLAlchemy(app)
 app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 jwt = JWTManager(app)
-db = SQLAlchemy(app)
+
 migrate = Migrate(app, db)
-api = Api(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
-from auth import UserLogin, UserRegister
-from models import Modality, Measurable, Technology
+from models import Modality, Measurable, Technology, User
+from forms import LoginForm, RegistrationForm
 
-api.add_resource(UserRegister, '/auth/register')
-api.add_resource(UserLogin, '/auth/login')
-
-@app.route('/login', methods=['GET','POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-	if request.method == 'POST':
-		data={'email': request.form['email'],
-		'password': request.form['password']}
-		print(data)
-		r = requests.post(
-			url="http://localhost:5000/auth/login",
-			data=data
-			)
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        return redirect(url_for('index'))
+    return render_template('login.html', title='Sign In', form=form)
 
-		print(r.json())
-	return render_template('login.html')
 
 
-
-@app.route('/register', methods=['POST'])
+@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data, registered_on=datetime.now(), admin=False)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('login'))
+    return render_template('register.html', title='Register', form=form)
 
-    username = request.json.get('email', None)
-    password = request.json.get('password', None)
-    if not username:
-        return jsonify({"msg": "Missing username parameter"}), 400
-    if not password:
-        return jsonify({"msg": "Missing password parameter"}), 400
-
-    if username != 'test' or password != 'test':
-        return jsonify({"msg": "Bad username or password"}), 401
-
-    # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=username)
-    return jsonify(access_token=access_token), 200
-
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 @app.route('/', methods=['GET', 'POST'])
-@jwt_required
+@login_required
 def index():
 	return render_template('index.html')
 
