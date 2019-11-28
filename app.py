@@ -2,7 +2,6 @@ import os
 from flask import Flask, render_template, request, jsonify, redirect, flash, url_for
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
-from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_restful import Api
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
@@ -17,8 +16,8 @@ from flask_jwt_extended import (
 )
 
 app = Flask(__name__)
-db = SQLAlchemy(app)
 app.config.from_object(os.environ['APP_SETTINGS'])
+db = SQLAlchemy(app)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 jwt = JWTManager(app)
