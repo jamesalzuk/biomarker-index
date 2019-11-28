@@ -22,3 +22,9 @@ def query_index(index, query, page, per_page):
               'from': (page - 1) * per_page, 'size': per_page})
     ids = [int(hit['_id']) for hit in search['hits']['hits']]
     return ids, search['hits']['total']['value']
+
+def create_index(index):
+    if not es.indices.exists(index=index):
+        es.indices.create(index=index, ignore=400)
+
+        

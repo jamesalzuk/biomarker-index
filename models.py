@@ -1,7 +1,7 @@
 from app import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from search import add_to_index, remove_from_index, query_index
+from search import add_to_index, remove_from_index, query_index, create_index
 
 class SearchableMixin(object):
     @classmethod
@@ -40,6 +40,10 @@ class SearchableMixin(object):
     def reindex(cls):
         for obj in cls.query:
             add_to_index(cls.__tablename__, obj)
+
+    def create_es_index(cls):
+    	create_index()
+
 
 class Measurable(SearchableMixin, db.Model):
 	__searchable__ = ['name', 'description']
