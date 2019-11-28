@@ -67,31 +67,29 @@ def index():
 @app.route('/measurable', methods=['GET', 'POST'])
 def measurable_list():
 	measurables = []
-	if request.method == 'POST':
-		name = request.form['measurable']
-		measurables, number = Measurable.search(name, 1,10)
-	else:
-		measurables = Measurable.query.all()
+	if request.args:
+		args=request.args
+		query = args['search']
+		measurables, number = Measurable.search(query,1,10)
 	return render_template('measurable_list.html', measurables=measurables)
 
 @app.route('/technology', methods=['GET', 'POST'])
 def technology_list():
 	technologies = []
-	if request.method == 'POST':
-		name = request.form['technology']
-		technologies, number = Technology.search(name, 1,10)
-	else:
-		technologies = Technology.query.all()
+	if request.args:
+		args=request.args
+		query = args['search']
+		technologies, number =  Technology.search(name, 1,10)
 	return render_template('technology_list.html', technologies=technologies)
 
 @app.route('/modality', methods=['GET', 'POST'])
 def modality_list():
 	modalities = []
-	if request.method == 'POST':
-		name = request.form['modality']
-		modalities, number = Modality.search(name, 1,10)
-	else:
-		modalities = Modality.query.all()
+	if request.args:
+		args=request.args
+		query = args['search']
+		modalities, number = Modality.search(query, 1,10)
+
 	return render_template('modality_list.html', modalities=modalities)
 
 @app.route('/modality/<id>')
