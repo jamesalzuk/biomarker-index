@@ -41,6 +41,7 @@ class SearchableMixin(object):
         for obj in cls.query:
             add_to_index(cls.__tablename__, obj)
 
+    @classmethod
     def create_es_index(cls):
     	create_index()
 
