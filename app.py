@@ -1,4 +1,4 @@
-import os
+import os, re
 from flask import Flask, render_template, request, jsonify, redirect, flash, url_for
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
@@ -9,18 +9,15 @@ from werkzeug.urls import url_parse
 import requests
 import pandas as pd
 from datetime import datetime
+from elasticsearch_instance import es
 
-from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
-    get_jwt_identity
-)
+# Verify that Python can talk to Bonsai (optional):
 
 app = Flask(__name__)
+app.elasticsearch = es
 app.config.from_object(os.environ['APP_SETTINGS'])
 db = SQLAlchemy(app)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-jwt = JWTManager(app)
 
 migrate = Migrate(app, db)
 login_manager = LoginManager()
@@ -45,8 +42,6 @@ def login():
     return render_template('login.html', title='Sign In', form=form)
 
 
-
-@app.route('/register', methods=['GET', 'POST'])
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -66,7 +61,6 @@ def logout():
     return redirect(url_for('index'))
 
 @app.route('/', methods=['GET', 'POST'])
-@login_required
 def index():
 	return render_template('index.html')
 
@@ -75,8 +69,7 @@ def measurable_list():
 	measurables = []
 	if request.method == 'POST':
 		name = request.form['measurable']
-		m = Measurable.query.filter_by(name=name).first()
-		measurables.append(m)
+		measurables, number = Measurable.search(name, 1,10)
 	else:
 		measurables = Measurable.query.all()
 	return render_template('measurable_list.html', measurables=measurables)
@@ -86,8 +79,7 @@ def technology_list():
 	technologies = []
 	if request.method == 'POST':
 		name = request.form['technology']
-		t = Technology.query.filter_by(name=name).first()
-		technologies.append(t)
+		technologies, number = Technology.search(name, 1,10)
 	else:
 		technologies = Technology.query.all()
 	return render_template('technology_list.html', technologies=technologies)
@@ -97,8 +89,7 @@ def modality_list():
 	modalities = []
 	if request.method == 'POST':
 		name = request.form['modality']
-		m = Modality.query.filter_by(name=name).first()
-		modalities.append(m)
+		modalities, number = Modality.search(name, 1,10)
 	else:
 		modalities = Modality.query.all()
 	return render_template('modality_list.html', modalities=modalities)
