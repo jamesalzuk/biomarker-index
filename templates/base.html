@@ -23,7 +23,13 @@
           <a class="nav-link" href="https://www.edon-initiative.org/">EDoN Home <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/logout">Log out</a>
+          {% with user = current_user %}
+          {% if current_user.is_authenticated %}
+            <a class="nav-link" href="/logout">Logout</a>
+          {% else %}
+            <a class="nav-link" href="/login">Login</a>
+          {% endif %}
+          {% endwith %}
         </li>
       </ul>
       <form class="form-inline my-2 my-lg-0" role="form" method='POST' action='/'>
