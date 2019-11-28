@@ -43,7 +43,7 @@ class SearchableMixin(object):
 
     @classmethod
     def create_es_index(cls):
-    	create_index()
+    	create_index(cls.__tablename__)
 
 
 class Measurable(SearchableMixin, db.Model):
