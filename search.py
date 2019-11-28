@@ -24,7 +24,7 @@ def query_index(index, query, page, per_page):
     return ids, search['hits']['total']['value']
 
 def create_index(index):
-    if not es.indices.exists(index=index):
-        es.indices.create(index=index, ignore=400)
+    if not current_app.elasticsearch.indices.exists(index=index):
+        current_app.elasticsearch.indices.create(index=index, ignore=400)
 
         
