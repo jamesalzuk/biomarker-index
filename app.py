@@ -79,7 +79,7 @@ def technology_list():
 	if request.args:
 		args=request.args
 		query = args['search']
-		technologies, number =  Technology.search(name, 1,10)
+		technologies, number =  Technology.search(query, 1,10)
 	return render_template('technology_list.html', technologies=technologies)
 
 @app.route('/modality', methods=['GET', 'POST'])
